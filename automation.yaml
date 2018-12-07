@@ -1,0 +1,222 @@
+- alias: "Kitchen Camera Motion"
+  trigger:
+    platform: mqtt
+    topic: kitchen/camera/motion
+    payload: "1"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "Kitchen Camera Motion Detected!"
+- alias: "Kitchen Motion Detector"
+  trigger:
+    platform: mqtt
+    topic: home/kitchen/motion
+    payload: "1"
+  action:
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: 34ce00fa7a09
+        ringtone_id: 8
+        ringtone_vol: 2
+- alias: Front Door Open
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00024e3301
+    from: "off"
+    to: "on"
+  action:
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: 34ce00fa7a09
+        ringtone_id: 10
+        ringtone_vol: 2
+    - service: notify.pushbullet
+      data:
+        message: "front door open"
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.gateway_light_34ce00fa7a09
+        brightness: 75
+        rgb_color: [15, 50, 175]
+- alias: "Front Door closed"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00024e3301
+    from: "on"
+    to: "off"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "front door closed"
+    - service: light.turn_off
+      data:
+        entity_id: light.gateway_light_34ce00fa7a09
+- alias: "Back Door open"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00024e5eea
+    from: "off"
+    to: "on"
+  action:
+    - service: xiaomi_aqara.play_ringtone
+      data:
+        gw_mac: 34ce00fa7a09
+        ringtone_id: 11
+        ringtone_vol: 2
+    - service: notify.pushbullet
+      data:
+        message: "back door open"
+    - service: homeassistant.turn_on
+      data:
+        entity_id: light.gateway_light_34ce00fa7a09
+        brightness: 75
+        rgb_color: [15, 175, 50]
+- alias: "Back Door closed"
+  trigger:
+    platform: state
+    entity_id: binary_sensor.door_window_sensor_158d00024e5eea
+    from: "on"
+    to: "off"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "back door closed"
+    - service: light.turn_off
+      data:
+        entity_id: light.gateway_light_34ce00fa7a09
+- alias: "OpenHole Offline"
+  trigger:
+    platform: state
+    entity_id: device_tracker.srv_openhole
+    from: "home"
+    to: "not_home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "srv_openhole Offline!"
+- alias: "OpenHole Online"
+  trigger:
+    platform: state
+    entity_id: device_tracker.srv_openhole
+    from: "not_home"
+    to: "home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "srv_openhole Service Restored"
+- alias: "Sensor00 Offline"
+  trigger:
+    platform: state
+    entity_id: device_tracker.sens00_wifi
+    from: "home"
+    to: "not_home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "Kitchen Sensor Offline!"
+- alias: "Sensor00 Online"
+  trigger:
+    platform: state
+    entity_id: device_tracker.sens00_wifi
+    from: "not_home"
+    to: "home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "Kitchen Sensor Service Restored"
+- alias: "Sensor 01 Offline"
+  trigger:
+    platform: state
+    entity_id: device_tracker.sens01_eth
+    from: "home"
+    to: "not_home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "LivingRoom Sensor Offline!"
+- alias: "Sensor 01 Online"
+  trigger:
+    platform: state
+    entity_id: device_tracker.sens01_eth
+    from: "not_home"
+    to: "home"
+  action:
+    - service: notify.pushbullet
+      data:
+        message: "LivingRoom Sensor Service Restored"
+#- alias: "Ian not home"
+#  trigger:
+#    platform: state
+#    entity_id: device_tracker.ian_phone
+#    from: "home"
+#    to: "not_home"
+#  action:
+#    - service: notify.pushbullet
+#      data:
+#        message: "Ian's Phone is not visible."
+#- alias: "Ian Home"
+#  trigger:
+#    platform: state
+#    entity_id: device_tracker.ian_phone
+#    from: "not_home"
+#    to: "home"
+#  action:
+#    - service: notify.pushbullet
+#      data:
+#        message: "Ian's Phone is visible at home"
+#- alias: "Julia not home"
+#  trigger:
+#    platform: state
+#    entity_id: device_tracker.julia_phone
+#    from: "home"
+#    to: "not_home"
+#  action:
+#    - service: notify.pushbullet
+#      data:
+#        message: "Julia's Phone is not visible." 
+#- alias: "Julia Home"
+#  trigger:
+#    platform: state
+#    entity_id: device_tracker.julia_phone
+#    from: "not_home"
+#    to: "home"
+#  action:
+#    - service: notify.pushbullet
+#      data:
+#        message: "Julia's Phone is visible at home"
+- alias: "Kitchen Temperature too cold"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.kitchen_temperature
+    below: '16'
+  action:
+    service: notify.pushbullet
+    data:
+      message: "Kitchen temperature has dropped below 18degC. Turn Heating Up!"
+- alias: "Kitchen Temperature too warm"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.kitchen_temperature
+    above: '21'
+  action:
+    service: notify.pushbullet
+    data:
+      message: "Kitchen temperature has gone above 21degC. Turn Heating Down!"
+- alias: "LivingRoom Temperature too cold"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.living_room_temperature
+    below: '16'
+  action:
+    service: notify.pushbullet
+    data:
+      message: "LivingRoom temperature has dropped below 18degC. Turn Heating Up!"
+- alias: "LivingRoom Temperature too warm"
+  trigger:
+    platform: numeric_state
+    entity_id: sensor.living_room_temperature
+    above: '21'
+  action:
+    service: notify.pushbullet
+    data:
+      message: "LivingRoom temperature has gone above 21degC. Turn Heating Down!"

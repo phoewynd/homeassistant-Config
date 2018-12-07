@@ -1,0 +1,114 @@
+homeassistant:
+  name: Home
+  latitude: !secret homeassistant.latitude
+  longitude: !secret homeassistant.longitude
+  elevation: 108
+  unit_system: metric
+  time_zone: Europe/London
+
+frontend:
+
+http:
+  api_password: !secret http.api_password
+  ssl_certificate: !secret http.ssl_certificate
+  ssl_key: !secret http.ssl_key
+  base_url: !secret http.base_url
+
+group:
+
+updater:
+
+discovery:
+
+conversation:
+
+history:
+
+logbook:
+
+sun:
+
+map:
+
+camera:
+  - platform: generic 
+    still_image_url: !secret kitchen.camera_url
+    name: Kitchen
+    username: !secret kitchen.camera_username
+    password: !secret kitchen.camera_password
+
+notify: !include notify.yaml
+
+media_player: !include media_players.yaml
+
+zone: !include zone.yaml
+
+mqtt:
+  broker: !secret mqtt.broker
+  username: !secret mqtt.username
+  password: !secret mqtt.password
+
+duckdns:
+  domain: !secret duckdns.domain
+  access_token: !secret duckdns.access_token
+
+xiaomi_aqara:
+  discovery_retry: 5
+  gateways:
+    - key: !secret xiaomi.gateways.key1
+
+sensor:
+  - platform: systemmonitor
+    resources:
+      - type: processor_use
+      - type: memory_use_percent
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+      - type: network_in
+      - type: network_out
+
+sensor:
+  - platform: command_line
+    name: SSL cert expiry
+    unit_of_measurement: days
+    scan_interval: 10800
+    command: !secret ssl-cert-check.command
+
+sensor:
+  - platform: mqtt
+    state_topic: "home/kitchen/temperature"
+    name: "Kitchen Temperature"
+    unit_of_measurement: °C
+  - platform: mqtt
+    state_topic: "home/kitchen/humidity"
+    name: "Kitchen Humidity"
+  - platform: mqtt
+    state_topic: "home/livingrm/temperature"
+    name: "Living Room Temperature"
+    unit_of_measurement: °C
+  - platform: mqtt
+    state_topic: "home/livingrm/humidity"
+    name: "Living Room Humidity"
+
+
+binary_sensor:
+  - platform: mqtt
+    name: "Camera Motion"
+    sensor_class: motion
+    payload_on: "1"
+    payload_off: "0"
+    state_topic: “kitchen/camera/motion”
+
+binary_sensor:
+  - platform: mqtt
+    state_topic: "home/kitchen/motion"
+    sensor_class: motion
+    payload_on: "1"
+    payload_off: "0"
+    name: "Motion/Kitchen"
+
+automation: !include automation.yaml
+
+tts:
+  platform: google
