@@ -29,6 +29,17 @@ logbook:
 sun:
 
 map:
+  - platform: openweathermap
+    api_key: !secret openweather.api_key
+    monitored_conditions:
+      - weather
+      - temperature
+      - wind_speed
+      - humidity
+      - pressure
+      - clouds
+      - rain
+      - snow
 
 camera:
   - platform: generic 
@@ -39,12 +50,12 @@ camera:
 
 notify: !include notify.yaml
 
-media_player: !include media_players.yaml
+#media_player: !include media_players.yaml
 
-zone: !include zone.yaml
+#zone: !include zone.yaml
 
 mqtt:
-  broker: !secret mqtt.broker
+  broker: 192.168.2.253
   username: !secret mqtt.username
   password: !secret mqtt.password
 
@@ -59,23 +70,18 @@ xiaomi_aqara:
 
 sensor:
   - platform: systemmonitor
+    name: system_monitor
     resources:
+      - type: disk_free
+        arg: /
+      - type: memory_free
       - type: processor_use
-      - type: memory_use_percent
-      - type: load_1m
-      - type: load_5m
-      - type: load_15m
-      - type: network_in
-      - type: network_out
-
-sensor:
+      - type: last_boot
   - platform: command_line
     name: SSL cert expiry
     unit_of_measurement: days
     scan_interval: 10800
     command: !secret ssl-cert-check.command
-
-sensor:
   - platform: mqtt
     state_topic: "home/kitchen/temperature"
     name: "Kitchen Temperature"
@@ -99,8 +105,6 @@ binary_sensor:
     payload_on: "1"
     payload_off: "0"
     state_topic: “kitchen/camera/motion”
-
-binary_sensor:
   - platform: mqtt
     state_topic: "home/kitchen/motion"
     sensor_class: motion
